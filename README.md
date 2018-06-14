@@ -511,24 +511,24 @@ var faxNumber: Optional<Int>
 
 Иногда нужно, чтобы объект был жив внутри замыкания, даже если все остальные ссылки на него удалены.
 
-Чтобы продлить время жизни объекта, можно использовать связку: сначала говорим [weak self], а после этого — guard let strongSelf = self else { return }:
+Чтобы продлить время жизни объекта, можно использовать связку: сначала говорим `[weak self]`, а после этого — ```guard let _self = self else { return }```:
 
 ```swift
 resource.request().onComplete { [weak self] response in
-  guard let strongSelf = self else {
+  guard let _self = self else {
     return
   }
-  let model = strongSelf.updateModel(response)
-  strongSelf.updateUI(model)
+  let model = _self.updateModel(response)
+  self.updateUI(model)
 }
 ```
-Если сразу известно, что объект будет жить дольше, чем замыкание, то в замыкании надо использовать [unowned self].
+Если сразу известно, что объект будет жить дольше, чем замыкание, то в замыкании надо использовать `[unowned self]`.
 
-Если не очевидно, кто будет жить дольше, то лучше использовать [weak self].
+Если не очевидно, кто будет жить дольше, то лучше использовать `[weak self]`.
 
-Кроме связки [weak self] + guard let strongSelf = self else { return }, есть два других способа обращаться с объектом внутри замыкания, но они плохие.
+Кроме связки `[weak self]` + ```guard let _self = self else { return }```, есть два других способа обращаться с объектом внутри замыкания, но они плохие.
 
-Вот так делать не надо:
+**Вот так делать не надо:**
 
 ```swift
 resource.request().onComplete { [unowned self] response in
@@ -538,7 +538,7 @@ resource.request().onComplete { [unowned self] response in
 ```
 Объект self может быть удалён из памяти перед вызовом замыкания; в этом случае метод self.updateModel() упадёт.
 
-Вот так делать тоже не надо:
+**Вот так делать тоже не надо:**
 
 ```swift
 resource.request().onComplete { [weak self] response in
