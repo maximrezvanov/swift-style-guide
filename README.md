@@ -3,6 +3,7 @@
 - [Отступы](#Отступы)
 - [Комментарии](#Комментарии)
 - [Классы и структуры](#Классы-и-структуры)
+- [Вложенные типы](#Вложенные-типы)
 - [Объявления функций](#Объявления-функций)
 - [Замыкания](#Замыкания)
 - [Типы](#Типы)
@@ -245,6 +246,78 @@ final class Box<T> {
   }
 }
 ```
+
+## Вложенные типы
+
+При необходимости использования вложенных типов (`nested types`) подтипы необходимо складывать в `extension` внури файла с основной моделью после ее описания. Колличество `extension` в которые будут складываться вложенные типы выбираются по усмотрению разработчика. Если появилась необоходимость сделать вложенный тип, для вложенного типа, то его нахождение делается так-же на усмотрение разработчика. Каждый вложенный тип необходимо выделять `MARK:`.
+
+В случае, если колличество строк внутри файла превышает установленные ограничения, то допустимо разбивать типы по файлам по установленным выше правилам.
+
+**Правильно:**
+```swift
+struct Person {
+    let id: String
+    let document: Document
+    let gender: Gender
+}
+
+// MARK: - Document
+extension Person {
+    struct Document {
+
+        let id: String
+        let kind: Kind
+
+        // MARK: - Kind
+        enum Kind {
+            case plain
+            case notPlain
+        }
+    }
+}
+
+// MARK: - Gender
+extension Person {
+    enum Gender {
+        case male
+        case female
+        case unspecified
+    }
+}
+```
+
+**Неправильно:**
+```swift
+struct Person {
+
+    // MARK: - Document
+    struct Document {
+        
+        enum Kind {
+            case plain
+            case notPlain
+        }
+        
+        let id: String
+        let kind: Kind
+    }
+    
+    // MARK: - Gender
+    enum Gender {
+        case male
+        case female
+        case unspecified
+    }
+
+    let id: String
+    let document: Document
+    let gender: Gender
+}
+```
+
+**Вложенные типы, как namespace**
+// TODO:
+
 ## Объявления функций
 
 Короткие объявления функций надо писать в одну строчку. Открывающая фигурная скобка не должна переносится на новую строку:
